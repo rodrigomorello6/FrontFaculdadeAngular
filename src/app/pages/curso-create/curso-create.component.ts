@@ -6,6 +6,7 @@ import { CursoService } from '../../services/curso.service';
 import { DepartamentoService } from '../../services/departamento.service';
 import { Curso } from '../../models/curso.model';
 import { Departamento } from '../../models/departamento.model';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-curso-create',
@@ -18,6 +19,7 @@ export class CursoCreateComponent implements OnInit {
   private cursoService = inject(CursoService);
   private departamentoService = inject(DepartamentoService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   // Lista para exibir na tabela de ajuda
   departamentos: Departamento[] = [];
@@ -42,7 +44,7 @@ export class CursoCreateComponent implements OnInit {
         this.departamentos = dados;
       },
       error: (err) => {
-        console.error('Erro ao buscar departamentos', err);
+        this.logger.error('Erro ao buscar departamentos', err);
       }
     });
   }
@@ -63,7 +65,7 @@ export class CursoCreateComponent implements OnInit {
         this.router.navigate(['/cursos']);
       },
       error: (e: any) => {
-        console.error(e);
+        this.logger.error('Erro ao criar curso', e);
         // Tenta pegar erro específico ou mostra genérico
         this.errorMessage = e.error?.title || 'Erro ao criar curso. Verifique se o ID do Departamento existe.';
         this.isLoading = false;

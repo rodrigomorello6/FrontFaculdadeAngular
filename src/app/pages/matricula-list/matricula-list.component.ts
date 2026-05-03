@@ -7,6 +7,7 @@ import { forkJoin } from 'rxjs'; // <--- Necessário para carregar tudo junto
 import { MatriculaService } from '../../services/matricula.service';
 import { AlunoService } from '../../services/aluno.service';
 import { CursoService } from '../../services/curso.service';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-matricula-list',
@@ -20,6 +21,7 @@ export class MatriculaListComponent implements OnInit {
   private matriculaService = inject(MatriculaService);
   private alunoService = inject(AlunoService);
   private cursoService = inject(CursoService);
+  private logger = inject(LoggerService);
 
   // Usamos 'any[]' ou uma interface estendida para poder guardar os nomes (alunoNome, nomeCurso)
   matriculas: any[] = []; 
@@ -56,7 +58,7 @@ export class MatriculaListComponent implements OnInit {
         this.loading = false;
       },
       error: (err: any) => {
-        console.error(err);
+        this.logger.error('Erro ao carregar matrículas', err);
         this.errorMessage = 'Erro ao carregar dados. Verifique a conexão.';
         this.loading = false;
       }

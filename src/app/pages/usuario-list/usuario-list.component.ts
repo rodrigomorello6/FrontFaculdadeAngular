@@ -1,6 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { LoggerService } from '../../services/logger.service';
 
 export interface UsuarioAPI {
   usuarioID: number;
@@ -17,6 +18,7 @@ export interface UsuarioAPI {
 })
 export class UsuarioListComponent implements OnInit {
   private authService = inject(AuthService);
+  private logger = inject(LoggerService);
   
   usuarios: UsuarioAPI[] = [];
   
@@ -37,7 +39,7 @@ export class UsuarioListComponent implements OnInit {
         this.carregando = false;
       },
       error: (err: any) => {
-        console.error('Erro ao listar', err);
+        this.logger.error('Erro ao listar usuários', err);
         this.erro = 'Não foi possível carregar os usuários.';
         this.carregando = false;
       }

@@ -7,6 +7,7 @@ import { forkJoin } from 'rxjs';
 import { MatriculaService } from '../../services/matricula.service';
 import { AlunoService } from '../../services/aluno.service';
 import { CursoService } from '../../services/curso.service';
+import { LoggerService } from '../../services/logger.service';
 
 // Importando os Modelos da pasta correta
 import { Aluno } from '../../models/aluno.model';
@@ -25,6 +26,7 @@ export class MatriculaCreateComponent implements OnInit {
   private alunoService = inject(AlunoService);
   private cursoService = inject(CursoService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   alunos: Aluno[] = [];
   cursos: Curso[] = [];
@@ -55,7 +57,7 @@ export class MatriculaCreateComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error(err);
+        this.logger.error('Erro ao carregar dados para matrícula', err);
         this.errorMessage = 'Erro ao carregar listas de cadastro.';
         this.isLoading = false;
       }
@@ -82,7 +84,7 @@ export class MatriculaCreateComponent implements OnInit {
             this.router.navigate(['/matriculas']);
         },
         error: (e) => {
-            console.error(e);
+            this.logger.error('Erro ao criar matrícula', e);
             this.errorMessage = 'Erro ao realizar matrícula. Tente novamente.';
             this.isLoading = false;
         }

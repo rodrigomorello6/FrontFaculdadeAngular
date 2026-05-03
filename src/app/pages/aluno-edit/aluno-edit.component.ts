@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlunoService } from '../../services/aluno.service';
 import { Aluno } from '../../models/aluno.model';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-aluno-edit',
@@ -16,6 +17,7 @@ export class AlunoEditComponent implements OnInit {
   private service = inject(AlunoService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private logger = inject(LoggerService);
 
   id = 0;
   nome = '';
@@ -38,7 +40,7 @@ export class AlunoEditComponent implements OnInit {
                 this.dataNascimento = aluno.dataNascimento.split('T')[0];
             }
         },
-        error: (e: any) => console.error(e)
+        error: (e: any) => this.logger.error('Erro ao carregar aluno', e)
     });
   }
 
@@ -57,7 +59,7 @@ export class AlunoEditComponent implements OnInit {
             this.router.navigate(['/alunos']);
         },
         error: (e: any) => {
-            console.error(e);
+            this.logger.error('Erro ao atualizar aluno', e);
             alert('Erro ao atualizar.');
         }
     });

@@ -7,6 +7,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { NotaService } from '../../services/nota.service';
 import { AlunoService } from '../../services/aluno.service';
 import { DisciplinaService } from '../../services/disciplina.service';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-nota-form',
@@ -21,6 +22,7 @@ export class NotaFormComponent implements OnInit {
   private disciplinaService = inject(DisciplinaService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private logger = inject(LoggerService);
 
   // Listas para os Dropdowns
   listaAlunos: any[] = [];
@@ -53,7 +55,7 @@ export class NotaFormComponent implements OnInit {
     // Carrega Alunos
     this.alunoService.getAll().subscribe({
       next: (dados) => this.listaAlunos = dados,
-      error: (e) => console.error('Erro ao carregar alunos', e)
+      error: (e) => this.logger.error('Erro ao carregar alunos', e)
     });
 
     // Carrega Disciplinas
@@ -62,7 +64,7 @@ export class NotaFormComponent implements OnInit {
         this.listaDisciplinas = dados;
         if (!this.isEditMode) this.carregando = false; // Libera se for Novo
       },
-      error: (e) => console.error('Erro ao carregar disciplinas', e)
+      error: (e) => this.logger.error('Erro ao carregar disciplinas', e)
     });
   }
 

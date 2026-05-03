@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CursoService, } from '../../services/curso.service';
 import { Curso } from '../../models/curso.model';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-curso-edit',
@@ -16,6 +17,7 @@ export class CursoEditComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cursoService = inject(CursoService);
+  private logger = inject(LoggerService);
 
   id = 0;
   nomeCurso = '';
@@ -35,7 +37,7 @@ export class CursoEditComponent implements OnInit {
         this.nomeCurso = curso.nomeCurso;
         this.departamentoID = curso.departamentoID ?? 0;
       },
-      error: (e: any) => console.error(e)
+      error: (e: any) => this.logger.error('Erro ao carregar curso', e)
     });
   }
 
@@ -52,7 +54,7 @@ export class CursoEditComponent implements OnInit {
         this.router.navigate(['/cursos']);
       },
       error: (e: any) => {
-        console.error(e);
+        this.logger.error('Erro ao atualizar curso', e);
         alert('Erro ao atualizar.');
       }
     });

@@ -3,6 +3,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { AlunoService, } from '../../services/aluno.service';
 import { Aluno } from '../../models/aluno.model';
+import { LoggerService } from '../../services/logger.service';
 
 
 @Component({
@@ -14,7 +15,8 @@ import { Aluno } from '../../models/aluno.model';
 })
 export class AlunoListComponent implements OnInit {
   private alunoService = inject(AlunoService);
-  private router = inject(Router); 
+  private router = inject(Router);
+  private logger = inject(LoggerService); 
 
   alunos: Aluno[] = [];
   loading = true;
@@ -31,7 +33,7 @@ export class AlunoListComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        console.error(err);
+        this.logger.error('Erro ao carregar alunos', err);
         this.loading = false;
       }
     });

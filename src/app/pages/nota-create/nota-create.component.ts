@@ -6,6 +6,7 @@ import { forkJoin } from 'rxjs';
 import { NotaService } from '../../services/nota.service';
 import { DisciplinaService} from '../../services/disciplina.service';
 import { AlunoService } from '../../services/aluno.service';
+import { LoggerService } from '../../services/logger.service';
 import { Aluno } from '../../models/aluno.model';
 import { Disciplina } from '../../models/disciplina.model';
 import { Nota } from '../../models/nota.model';
@@ -22,6 +23,7 @@ export class NotaCreateComponent implements OnInit {
   private notaService = inject(NotaService);
   private disciplinaService = inject(DisciplinaService);
   private alunoService = inject(AlunoService);
+  private logger = inject(LoggerService);
 
   disciplinas: Disciplina[] = [];
   alunos: Aluno[] = [];
@@ -51,7 +53,7 @@ export class NotaCreateComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error(err);
+        this.logger.error('Erro ao carregar dados para o formulário de nota', err);
         this.errorMessage = 'Erro ao carregar dados para o formulário.';
         this.isLoading = false;
       }
@@ -78,7 +80,7 @@ export class NotaCreateComponent implements OnInit {
             this.router.navigate(['/notas']);
         },
         error: (e: any) => {
-            console.error(e);
+            this.logger.error('Erro ao criar nota', e);
             this.errorMessage = 'Erro ao lançar nota. Tente novamente.';
             this.isLoading = false;
         }

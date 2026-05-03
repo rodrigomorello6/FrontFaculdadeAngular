@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DepartamentoService } from '../../services/departamento.service';
 import { Departamento } from '../../models/departamento.model';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-departamento-list',
@@ -13,6 +14,7 @@ import { Departamento } from '../../models/departamento.model';
 })
 export class DepartamentoListComponent implements OnInit {
   private departamentoService = inject(DepartamentoService);
+  private logger = inject(LoggerService);
   
   departamentos: Departamento[] = [];
 
@@ -23,7 +25,7 @@ export class DepartamentoListComponent implements OnInit {
   carregarDepartamentos() {
     this.departamentoService.getAll().subscribe({
       next: (dados) => this.departamentos = dados,
-      error: (err) => console.error('Erro ao carregar departamentos', err)
+      error: (err) => this.logger.error('Erro ao carregar departamentos', err)
     });
   }
 

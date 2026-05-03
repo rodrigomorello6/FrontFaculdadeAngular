@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProfessorService } from '../../services/professor.service';
+import { LoggerService } from '../../services/logger.service';
 import { Professor } from '../../models/professor.model';
 
 @Component({
@@ -16,6 +17,7 @@ export class ProfessorEditComponent implements OnInit {
   private service = inject(ProfessorService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private logger = inject(LoggerService);
 
   id = 0;
   professor: Professor | null = null; 
@@ -41,7 +43,7 @@ export class ProfessorEditComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error(err);
+        this.logger.error('Erro ao carregar professor', err);
         this.errorMessage = 'Professor não encontrado.';
         this.isLoading = false;
         // Redireciona após 2s se der erro
