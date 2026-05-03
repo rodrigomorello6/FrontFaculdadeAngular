@@ -1,14 +1,15 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Necessário para @if, @for
-import { Router, RouterLink, RouterOutlet } from '@angular/router'; // Necessário para navegação
+import { CommonModule } from '@angular/common';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterOutlet, 
+    CommonModule,
+    RouterOutlet,
     RouterLink
   ],
   templateUrl: './main-layout.component.html',
@@ -16,33 +17,30 @@ import { AuthService } from '../../services/auth.service';
 })
 export class MainLayoutComponent {
   private authService = inject(AuthService);
-  private router = inject(Router);
+  private logger = inject(LoggerService);
 
-  // --- Lógica para identificar o Admin ---
   get isAdmin(): boolean {
     const token = this.authService.getToken();
     if (!token) return false;
 
     try {
-      const payloadBase64 = token.split('.')[1];
-      const payloadJson = atob(payloadBase64);
+      const payloadBase64Url = token.split('.')[1];
+      if (!payloadBase64Url) return false;
+
+      const normalizedBase64 = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const paddedBase64 = normalizedBase64.padEnd(Math.ceil(normalizedBase64.length / 4) * 4, '=');
+      const payloadJson = atob(paddedBase64);
       const payload = JSON.parse(payloadJson);
 
       const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload['role'];
-      
       return role === 'Admin';
     } catch (error) {
-      console.error('Erro ao ler token:', error);
+      this.logger.error('Falha ao ler role do token JWT.', error);
       return false;
     }
   }
 
-  // --- Lógica de Logout ---
   sair() {
-    // 1. Limpa o token
     this.authService.logout();
-    
-    // 2. Redireciona para o login
-    this.router.navigate(['/login']);
   }
 }
