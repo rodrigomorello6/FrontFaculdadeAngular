@@ -1,21 +1,19 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { LoggerService } from '../services/logger.service';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = (_route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
+  const logger = inject(LoggerService);
 
   const estaLogado = authService.isLoggedIn();
 
-  console.log('AuthGuard verificando rota:', state.url);
-  console.log('Usuário está logado?', estaLogado);
-
   if (estaLogado) {
-    return true; // Pode passar
-  } else {
-    console.warn('Acesso negado! Redirecionando para login...');
-    router.navigate(['/login']);
-    return false; // Barrado
+    return true;
   }
+
+  logger.warn(`Acesso negado para rota protegida: ${state.url}`);
+  return router.createUrlTree(['/login']);
 };

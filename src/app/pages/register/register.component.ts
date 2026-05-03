@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { RegisterRequest } from '../../models/register-request';
+import { RegisterRequest } from '../../models/auth.models';
+import { LoggerService } from '../../services/logger.service';
 
 @Component({
   selector: 'app-register',
@@ -63,6 +64,7 @@ import { RegisterRequest } from '../../models/register-request';
 export class RegisterComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
 
   login = '';
   senha = '';
@@ -73,9 +75,9 @@ export class RegisterComponent {
 
   fazerCadastro() {
     if (!this.login || !this.senha) {
-        this.mensagem = "Preencha todos os campos!";
-        this.sucesso = false;
-        return;
+      this.mensagem = 'Preencha todos os campos!';
+      this.sucesso = false;
+      return;
     }
 
     this.loading = true;
@@ -88,12 +90,19 @@ export class RegisterComponent {
     };
 
     this.authService.register(dados).subscribe({
-      next: (response: any) => {  // <--- Adicione o tipo
-        console.log('Sucesso', response);
-    },
-      error: (err: any) => {      // <--- Adicione o tipo
-        console.error('Erro', err);
-    }
+      next: () => {
+        this.loading = false;
+        this.sucesso = true;
+        this.mensagem = 'Utilizador criado com sucesso!';
+        this.limparFormulario();
+        this.router.navigate(['/login']);
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.sucesso = false;
+        this.mensagem = err?.error?.message || 'Erro ao criar utilizador.';
+        this.logger.error('Erro no cadastro de utilizador.', err);
+      }
     });
   }
 
